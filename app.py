@@ -52,7 +52,7 @@ if 'user' not in st.session_state:
                     st.rerun()
                 else:
                     st.error("Authentication Failed")
-                    st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZ3bm5qZzR4eXJ3eHh4eXJ3eHh4eXJ3eHh4eXJ3eHh4JnVwPTE/u0b9k3K8YfW8w/giphy.gif", use_container_width=True)
+            
         else:
             if st.button("Create Account ✨", use_container_width=True):
                 if auth.signup_user(email, pwd): st.success("Account Created! You can now login.")
@@ -76,9 +76,6 @@ with st.sidebar:
     
     # 2. ADDED SIDEBAR GIF (Spinning Globe)
     st.divider()
-    st.image("https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3ZDZpOG9ldXRuYzMyaWo5MzZnYXhsZDZsbjh5dTM0NXJjeXM0Y2lpaiZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/8uanhJLIbG9G8MkpIP/giphy.gif", width=150)
-    st.caption("Plan with VoyageAI")
-
     generate_btn = st.button("Generate Experience ✨", use_container_width=True)
 
 # --- CONTENT DISPLAY ---
@@ -92,7 +89,7 @@ with tab1:
             # 3. ADDED CUSTOM GIF LOADER
             loading_placeholder = st.empty()
             with loading_placeholder.container():
-                st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExb3NrczhkbjR5eHI4ZW16Mzd4eDdreDB6Y2ZtcTRiYnFpMzJmMHoxNyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/9GhVS2ZVaI1Yk/giphy.gif", width=300)
+                
                 st.write("### 🌍 AI is analyzing geography and fetching visuals...")
             
             # Perform Logic
