@@ -4,7 +4,7 @@ import auth
 import utils
 
 # Final Project Name: VoyageAI
-st.set_page_config(page_title="VoyageAI Pro", layout="wide", page_icon="🌍")
+st.set_page_config(page_title="VoyageAI", layout="wide", page_icon="🌍")
 db.init_db()
 
 # Custom CSS for Modern UI and Theme-Adaptive Text
@@ -16,7 +16,7 @@ st.markdown("""
     /* Login Page Styling */
     .login-container {
         background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop');
-        background-size: cover; padding: 100px; border-radius: 20px; text-align: center; color: white;
+        background-size: cover; padding: 60px; border-radius: 20px; text-align: center; color: white;
     }
 
     /* Professional Gallery Grid */
@@ -40,6 +40,9 @@ if 'photos' not in st.session_state: st.session_state.photos = []
 if 'user' not in st.session_state:
     cols = st.columns([1, 2, 1])
     with cols[1]:
+        # 1. ADDED LOGIN GIF (Flying Plane)
+        st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZ3bm5qZzR4eXJ3eHh4eXJ3eHh4eXJ3eHh4eXJ3eHh4JnVwPTE/u0b9k3K8YfW8w/giphy.gif", use_container_width=True)
+        
         st.markdown('<div class="login-container"><h1>🌍 VoyageAI Pro</h1><p>Intelligent Logistics & Itinerary Engine</p></div>', unsafe_allow_html=True)
         choice = st.radio("Access Portal", ["Login", "Sign Up"], horizontal=True)
         email = st.text_input("Email")
@@ -49,7 +52,8 @@ if 'user' not in st.session_state:
                 if auth.login_user(email, pwd):
                     st.session_state.user = email
                     st.rerun()
-                else: st.error("Authentication Failed")
+                else:
+                    st.error("Authentication Failed")
         else:
             if st.button("Create Account ✨", use_container_width=True):
                 if auth.signup_user(email, pwd): st.success("Account Created! You can now login.")
@@ -63,24 +67,44 @@ with st.sidebar:
         del st.session_state.user
         st.rerun()
     st.divider()
-    depart = st.text_input("🛫 From", "Faridabad")
-    dest = st.text_input("📍 To", "Rameshwaram")
+    depart = st.text_input("🛫 From", "" , placeholder="Enter departure city")
+    dest = st.text_input("📍 To", "" , placeholder="Enter destination city")
     transport = st.selectbox("🚆 Mode of Transport", ["Flight", "Train", "Bus", "Private Car"])
     days = st.slider("📅 Days", 1, 14, 5)
     budget = st.selectbox("💰 Budget", ["Economy", "Moderate", "Luxury"])
     style = st.selectbox("🎭 Travel Style", ["Relaxation", "Adventure", "Cultural", "Religious"])
     interests = st.multiselect("❤️ Interests", ["Nature", "Food", "History", "Nightlife", "Spirituality"])
     
-    if st.button("Generate Experience ✨", use_container_width=True):
-        with st.spinner("Calculating logistics and fetching visuals..."):
-            st.session_state.photos = utils.fetch_gallery_photos(dest)
-            st.session_state.plan = utils.get_ai_itinerary(dest, depart, days, budget, style, interests, transport)
-            st.session_state.last_dest, st.session_state.last_depart = dest, depart
+    # 2. ADDED SIDEBAR GIF (Spinning Globe)
+    st.divider()
+    st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmZueXByZzR4eXJ3eHh4eXJ3eHh4eXJ3eHh4eXJ3eHh4JnVwPTE/3o7TKMGpxxcaK85rkY/giphy.gif", width=150)
+    st.caption("Plan with VoyageAI")
+
+    generate_btn = st.button("Generate Experience ✨", use_container_width=True)
 
 # --- CONTENT DISPLAY ---
 tab1, tab2 = st.tabs(["🗺️ Master Planner", "📜 My Saved Trips"])
 
 with tab1:
+    if generate_btn:
+        if not depart or not dest:
+            st.error("Please provide both cities!")
+        else:
+            # 3. ADDED CUSTOM GIF LOADER
+            loading_placeholder = st.empty()
+            with loading_placeholder.container():
+                st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZ3bm5qZzR4eXJ3eHh4eXJ3eHh4eXJ3eHh4eXJ3eHh4JnVwPTE/LpLd2CQv18K7S/giphy.gif", width=300)
+                st.write("### 🌍 AI is analyzing geography and fetching visuals...")
+            
+            # Perform Logic
+            st.session_state.photos = utils.fetch_gallery_photos(dest)
+            st.session_state.plan = utils.get_ai_itinerary(dest, depart, days, budget, style, interests, transport)
+            st.session_state.last_dest, st.session_state.last_depart = dest, depart
+            
+            # Clear loader
+            loading_placeholder.empty()
+
+    # Display the Resulting Plan
     if st.session_state.plan:
         # 1. Responsive Gallery
         num_imgs = len(st.session_state.photos)
@@ -101,8 +125,10 @@ with tab1:
             st.warning(f"🚍 **Logistics Summary:**\n\n{sections[0].strip()}")
 
         for s in sections[1:]:
-            title, body = s.split("\n", 1)
-            st.markdown(f'<div class="itinerary-card"><div class="day-header">🗓️ DAY {title}</div><div>{body.replace("- ", "• ").replace("\n", "<br>")}</div></div>', unsafe_allow_html=True)
+            parts = s.split("\n", 1)
+            if len(parts) > 1:
+                title, body = parts[0], parts[1]
+                st.markdown(f'<div class="itinerary-card"><div class="day-header">🗓️ DAY {title}</div><div>{body.replace("- ", "• ").replace("\n", "<br>")}</div></div>', unsafe_allow_html=True)
         
         if st.button("💾 Save Adventure to Database", use_container_width=True):
             db.save_trip(st.session_state.user, st.session_state.last_depart, st.session_state.last_dest, st.session_state.plan)
